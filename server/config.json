@@ -1,0 +1,27 @@
+{
+  "server": {
+    "port": 8000
+  },
+  "machine": {
+    "machineName": "testMachine",
+    "fileDirectory": "/Users/gregyotz/source/bbp/cnc-batch-process/cnc/"
+  },
+  "rateInMillis": 5000,
+  "loggerConfig": {
+    "appenders": [
+      {
+        "type": "console"
+      }
+    ],
+    "replaceConsole": true
+  },
+  "logChuckDates": true,
+  "userSqLite": true,
+  "sqlServerConfig": {
+    "user": "nodeuser",
+    "password": "Node1234",
+    "server": "ec2-52-41-26-66.us-west-2.compute.amazonaws.com",
+    "database": "cnc"
+  }
+}
+
