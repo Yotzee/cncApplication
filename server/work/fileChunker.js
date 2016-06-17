@@ -3,9 +3,9 @@ var events = require('events');
 var fileChunkerEmitter = new events.EventEmitter();
 var decoder = require('./decoder');
 var util = require('./util');
+var config = require('../config.json');
 
-
-fileChunkerEmitter.on('chunkFile',function(filePath,fileName){
+function doChunkFile(filePath,fileName){
 
     var fd = fs.openSync(filePath+fileName, 'r');
 
@@ -19,9 +19,17 @@ fileChunkerEmitter.on('chunkFile',function(filePath,fileName){
     }
 
     fs.close(fd);
+}
+
+fileChunkerEmitter.on('chunkFile', function(filePath,fileName){
+    doChunkFile(filePath,fileName);
 });
 
 exports.chunkFile = function(filePath,fileName){
     console.log ( 'chunking file: ' + fileName);
-    fileChunkerEmitter.emit('chunkFile',filePath,fileName);
+    if(config.useEvents){
+        fileChunkerEmitter.emit('chunkFile',filePath,fileName);
+    }else{
+        doChunkFile(filePath,fileName);
+    }
 };

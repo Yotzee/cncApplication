@@ -4,15 +4,12 @@ var util = require('./util');
 var uploader = require('./uploader');
 var config = require('.././config.json');
 
-exports.decodeEmitter = decoderEmitter;
 var getDate = function(line,fileName){
     fileName = fileName.replace(/(.lbd)+/g, '');
     var date = new Date(0);
     date.setYear(fileName[0] += fileName[1] += fileName[2] += fileName[3]);
     date.setMonth(fileName[4] += fileName[5] - 1);
     date.setDate(fileName[6] += fileName[7]);
-    //date.setHours(0);
-    //date.setMinutes(0);
     date.setSeconds((line + 1) * 10);
 
     if(config.logChuckDates){
@@ -20,9 +17,10 @@ var getDate = function(line,fileName){
     }
     return date;
 };
+
 var createWorkObj = function (temp,line,fileName) {
     var obj = {
-        fileName: fileName,
+        fileName:  fileName.replace(/(.lbd)+/g, ''),
         date: getDate(line,fileName),
         SPDL_FB1: util.getInt(util.sub(temp, 0x00, 2)),
         SPDL_FB2: util.getInt(util.sub(temp, 0x02, 2)),
@@ -53,17 +51,26 @@ var createWorkObj = function (temp,line,fileName) {
         ALARM_NO: util.getInt(util.sub(temp, 0, 2)),
         ALARM_CODE1: util.getInt(util.sub(temp, 0, 2)),
         ALARM_CODE2: util.getInt(util.sub(temp, 0, 2)),
-        LARM_CODE3: util.getInt(util.sub(temp, 0, 2))
+        ALARM_CODE3: util.getInt(util.sub(temp, 0, 2))
     };
 
     return obj;
 };
 
-decoderEmitter.on('decode', function (chunk,line,fileName) {
-    var workObj = createWorkObj(chunk,line,fileName);
-    uploader.upload(workObj);
+decoderEmitter.on('decode', function(chunk,line,fileName){
+    doDecode(chunk,line,fileName);
 });
 
+function doDecode(chunk,line,fileName) {
+    var workObj = createWorkObj(chunk,line,fileName);
+    uploader.upload(workObj);
+}
+
 exports.decode = function (chunk,line, fileName) {
-    decoderEmitter.emit('decode', chunk,line, fileName);
+    if(config.useEvents){
+        decoderEmitter.emit('decode', chunk,line, fileName);
+    }else{
+        doDecode(chunk,line,fileName);
+    }
+
 };

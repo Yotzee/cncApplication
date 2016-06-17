@@ -4,7 +4,7 @@
   },
   "machine": {
     "machineName": "testMachine",
-    "fileDirectory": "/Users/gregyotz/source/bbp/cnc-batch-process/cnc/"
+    "fileDirectory": "/Users/gregyotz/Source/bbp/cncApplication/input/"
   },
   "rateInMillis": 5000,
   "loggerConfig": {
@@ -15,8 +15,9 @@
     ],
     "replaceConsole": true
   },
-  "logChuckDates": true,
-  "userSqLite": true,
+  "logChuckDates": false,
+  "outputCSVFIle" : false,
+  "useEvents": false,
   "sqlServerConfig": {
     "user": "nodeuser",
     "password": "Node1234",

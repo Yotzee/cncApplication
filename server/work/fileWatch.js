@@ -5,15 +5,25 @@ var path = require('path');
 var decoder = require('./decoder');
 var fileChunker = require('./fileChunker');
 var util = require('./util');
-var files = require('./.files.json');
+var config = require('../config.json');
+
 
 fileWatch.on('newFile', function (filePath, fileName) {
-    fileChunker.chunkFile(filePath, fileName);
+    doFileWatch(filePath, fileName);
 });
 
-
+function doFileWatch(filePath, fileName) {
+    fileChunker.chunkFile(filePath, fileName);
+}
 
 exports.findFiles = function (filePath) {
+    try{
+        var files = require('./.files.json');
+        // var files = fs.readFileSync(process.env.PWD + '/server/work/.files.json', "utf8")
+    }catch(err){
+        files = [];
+    }
+
     fs.readdir(filePath, function (err, list) {
         list.forEach(function(fileName){
             if (!(/[ldb]+/g).test(fileName)) {
@@ -26,7 +36,12 @@ exports.findFiles = function (filePath) {
                 if(foundFile.mtime){
                     if(Date(foundFile.mtime) != Date(fileInfo.mtime)){
                         console.log('found changed file: ' +  fileName);
-                        fileWatch.emit('newFile', filePath, fileName);
+                        if(config.useEvents){
+                            fileWatch.emit('newFile', filePath, fileName);
+                        }else{
+                            doFileWatch(filePath,fileName);
+                        }
+
                         foundFile.mtime = fileInfo.mtime;
                     }
                 }
@@ -43,10 +58,12 @@ exports.findFiles = function (filePath) {
                     }
                 });
                 console.log('found new file: ' +  fileName);
-                fileWatch.emit('newFile', filePath, fileName);
+                if(config.useEvents){
+                    fileWatch.emit('newFile', filePath, fileName);
+                }else{
+                    doFileWatch(filePath,fileName);
+                }
             }
-
-
         });
     });
 };

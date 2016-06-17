@@ -1,0 +1,51 @@
+
+USE [cnc]
+GO
+
+/****** Object:  Table [dbo].[Work]    Script Date: 6/17/2016 10:31:40 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[workItems] (
+  [id]          [bigint] IDENTITY (1, 1) NOT NULL,
+  [machineId]   [bigint]                 NOT NULL,
+  [date]        [date]                   NULL,
+  [SPDL_FB1]    [bigint]                 NULL,
+  [SPDL_FB2]    [bigint]                 NULL,
+  [SPDL_FB3]    [bigint]                 NULL,
+  [SPDL_FB4]    [bigint]                 NULL,
+  [ATMD_ALARM]  [bigint]                 NULL,
+  [MNMD_NA]     [bigint]                 NULL,
+  [SGNL_SGLB]   [bigint]                 NULL,
+  [SGNL_CUT]    [bigint]                 NULL,
+  [SPDL_ROT1]   [bigint]                 NULL,
+  [unknown1]    [bigint]                 NULL,
+  [SPDL_ROT2]   [bigint]                 NULL,
+  [unknown2]    [bigint]                 NULL,
+  [SPDL_ROT3]   [bigint]                 NULL,
+  [SPDL_ROT4]   [bigint]                 NULL,
+  [PARTS_CNT]   [bigint]                 NULL,
+  [SPDL_OVRD1]  [bigint]                 NULL,
+  [SPDL_OVRD2]  [bigint]                 NULL,
+  [SPDL_OVRD3]  [bigint]                 NULL,
+  [SPDL_OVRD4]  [bigint]                 NULL,
+  [FEED_OVRD]   [bigint]                 NULL,
+  [RAPID_OVRD]  [bigint]                 NULL,
+  [WNO_NO]      [nvarchar](MAX)          NULL,
+  [unknown3]    [bigint]                 NULL,
+  [WNO_ATRB]    [bigint]                 NULL,
+  [unknown]     [nvarchar](MAX)          NULL,
+  [ALARM_ATRB]  [bigint]                 NULL,
+  [ALARM_NO]    [bigint]                 NULL,
+  [ALARM_CODE1] [bigint]                 NULL,
+  [ALARM_CODE2] [bigint]                 NULL,
+  [ALARM_CODE3] [bigint]                 NULL
+
+) ON [PRIMARY]
+
+GO
+
+
