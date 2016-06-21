@@ -18,10 +18,12 @@ var getDate = function(line,fileName){
     return date;
 };
 
-var createWorkObj = function (temp,line,fileName) {
+var createWorkObj = function (temp,line,fileName, machine) {
     var obj = {
+        machineName: machine.machineName,
         fileName:  fileName.replace(/(.lbd)+/g, ''),
         date: getDate(line,fileName),
+        line: line,
         SPDL_FB1: util.getInt(util.sub(temp, 0x00, 2)),
         SPDL_FB2: util.getInt(util.sub(temp, 0x02, 2)),
         SPDL_FB3: util.getInt(util.sub(temp, 0x04, 2)),
@@ -57,20 +59,20 @@ var createWorkObj = function (temp,line,fileName) {
     return obj;
 };
 
-decoderEmitter.on('decode', function(chunk,line,fileName){
-    doDecode(chunk,line,fileName);
+decoderEmitter.on('decode', function(chunk,line,fileName, machine){
+    doDecode(chunk,line,fileName, machine);
 });
 
-function doDecode(chunk,line,fileName) {
-    var workObj = createWorkObj(chunk,line,fileName);
-    uploader.upload(workObj);
+function doDecode(chunk,line,fileName, machine) {
+    var workObj = createWorkObj(chunk,line,fileName, machine);
+    uploader.upload(workObj, machine);
 }
 
-exports.decode = function (chunk,line, fileName) {
+exports.decode = function (chunk,line, fileName, machine) {
     if(config.useEvents){
-        decoderEmitter.emit('decode', chunk,line, fileName);
+        decoderEmitter.emit('decode', chunk,line, fileName, machine);
     }else{
-        doDecode(chunk,line,fileName);
+        doDecode(chunk,line,fileName, machine);
     }
 
 };

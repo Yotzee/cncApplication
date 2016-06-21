@@ -5,13 +5,13 @@ var sql = require('mssql');
 var config = require('.././config.json');
 var sqlServerConfig = config.sqlServerConfig;
 
-uploadEmitter.on('uploadMSSQL', function (workObj) {
+uploadEmitter.on('uploadMSSQL', function (workObj, machine) {
     doUpload(workObj);
 });
 
-function doUpload(workObj) {
+function doUpload(workObj, machine) {
 
-    sql.connect(sqlServerConfig).then(function() {
+    sql.connect(sqlServerConfig).then(function () {
         var query = '';
         query += 'INSERT INTO [dbo].[workItems] ([machineId],[date],[SPDL_FB1],[SPDL_FB2],[SPDL_FB3],[SPDL_FB4],[ATMD_ALARM],[MNMD_NA],[SGNL_SGLB],[SGNL_CUT],[SPDL_ROT1],[unknown1],[SPDL_ROT2],[unknown2],[SPDL_ROT3],[SPDL_ROT4],[PARTS_CNT],[SPDL_OVRD1],[SPDL_OVRD2],[SPDL_OVRD3],[SPDL_OVRD4],[FEED_OVRD],[RAPID_OVRD],[WNO_NO],[unknown3],[WNO_ATRB],[unknown],[ALARM_ATRB],[ALARM_NO],[ALARM_CODE1],[ALARM_CODE2],[ALARM_CODE3] VALUES(';
         query += workObj.machineName + ',';
@@ -48,30 +48,40 @@ function doUpload(workObj) {
         query += workObj.ALARM_CODE3 + ');';
         console.log(query);
 
-    }).catch(function(err) {
+    }).catch(function (err) {
         //console.log(err);
     });
 }
 
-exports.upload = function (workObj) {
+exports.upload = function (workObj, machine) {
 
-    // if (config.outputCSVFIle) {
-    //     //uploadEmitter.emit('outputCSV', workObj);
-    //     exports.outputCSV(workObj);
-    // }
-    // else {
-    //     if(config.useEvents){
-    //         uploadEmitter.emit('uploadMSSQL', workObj);
-    //     }else{
-    //         doUpload(workObj);
-    //     }
-    // }
+    if (config.outputCSVFIle) {
+        //uploadEmitter.emit('outputCSV', workObj);
+        exports.outputCSV(workObj, machine);
+    }
+    else {
+        if (config.useEvents) {
+            uploadEmitter.emit('uploadMSSQL', workObj, machine);
+        } else {
+            doUpload(workObj, machine);
+        }
+    }
 };
 
-exports.outputCSV = function(workObj){
-
-    //var data = 'SPDL_FB1,SPDL_FB2,SPDL_FB3,SPDL_FB4,ATMD_ALARM,MNMD_NA,SGNL_SGLB,SGNL_CUT,SPDL_ROT1,unknown1,SPDL_ROT2,unknown2,SPDL_ROT3,SPDL_ROT4,PARTS_CNT,SPDL_OVRD1,SPDL_OVRD2,SPDL_OVRD3,SPDL_OVRD4,FEED_OVRD,RAPID_OVRD,WNO_NO,unknown3,WNO_ATRB,unknown,ALARM_ATRB,ALARM_NO,ALARM_CODE1,ALARM_CODE2,ALARM_CODE3\r\n';
+exports.outputCSV = function (workObj, machine) {
+    var file = 'output/' + machine.machineName + '.' + workObj.fileName + '.csv';
     var data = '';
+    if (workObj.line == 0) {
+        try {
+            fs.statSync(file).isFile();
+            fs.unlinkSync(file)
+            var header = 'MachineName,DateMS,SPDL_FB1,SPDL_FB2,SPDL_FB3,SPDL_FB4,ATMD_ALARM,MNMD_NA,SGNL_SGLB,SGNL_CUT,SPDL_ROT1,unknown1,SPDL_ROT2,unknown2,SPDL_ROT3,SPDL_ROT4,PARTS_CNT,SPDL_OVRD1,SPDL_OVRD2,SPDL_OVRD3,SPDL_OVRD4,FEED_OVRD,RAPID_OVRD,WNO_NO,unknown3,WNO_ATRB,unknown,ALARM_ATRB,ALARM_NO,ALARM_CODE1,ALARM_CODE2,ALARM_CODE3\r\n';
+            fs.appendFileSync(file, header);
+        } catch (err) {
+
+        }
+    }
+
     data += workObj.machineName += ',';
     data += workObj.date += ',';
     data += workObj.SPDL_FB1 += ',';
@@ -106,12 +116,8 @@ exports.outputCSV = function(workObj){
     data += workObj.ALARM_CODE3;
     data += '\r\n';
 
-    fs.appendFileSync('output/' + config.machine.machineName + '.' + workObj.fileName + '.csv', data );
-    /*
-    fs.writeFile('output/' + config.machine.machineName + '.' + workObj.fileName + '.csv', data , function (err) {
-        if (err) {
-            console.error('error writing: ' + workObj.fileName + err);
-        }
-    });
-    */
+
+
+    fs.appendFileSync(file, data);
+
 };

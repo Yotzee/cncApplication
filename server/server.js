@@ -12,7 +12,11 @@ var main = function(){
     console.log('-------------------------------');
     console.log('searching for new/changed files');
     console.log('-------------------------------');
-    fileWatch.findFiles(config.machine.fileDirectory);
+
+    config.machines.forEach(function(machine){
+        fileWatch.findFiles(machine);
+    });
+
 
     setTimeout(main,config.rateInMillis);
 };

@@ -2,10 +2,16 @@
   "server": {
     "port": 8000
   },
-  "machine": {
-    "machineName": "testMachine",
-    "fileDirectory": "/Users/gregyotz/Source/bbp/cncApplication/input/"
-  },
+  "machines": [
+    {
+      "machineName": "testMachine",
+      "fileDirectory": "/Users/gregyotz/Source/bbp/input/"
+    },
+    {
+      "machineName": "tempMac",
+      "fileDirectory": "/Users/gregyotz/Source/bbp/tempMac/"
+    }
+  ],
   "rateInMillis": 5000,
   "loggerConfig": {
     "appenders": [
@@ -16,7 +22,7 @@
     "replaceConsole": true
   },
   "logChuckDates": false,
-  "outputCSVFIle" : false,
+  "outputCSVFIle": true,
   "useEvents": false,
   "sqlServerConfig": {
     "user": "nodeuser",
